@@ -44,3 +44,18 @@ FIX "mini-diskmanager" "$PACKAGE_PATH/luci-app-mini-diskmanager" sed -i "s/servi
 #修改natmapt菜单位置
 FIX "natmapt" "$PACKAGE_PATH/luci-app-natmapt" sed -i "s/network/services/g" \
 	"$PACKAGE_PATH/luci-app-natmapt/root/usr/share/luci/menu.d/luci-app-natmap.json"
+
+#修复Samba4
+mkdir -p feeds/packages/net/samba4/patches
+cat > feeds/packages/net/samba4/patches/999-memset-explicit-c23.patch <<'PATCH'
+--- a/lib/replace/replace.c
++++ b/lib/replace/replace.c
+@@ -970,7 +970,7 @@ int rep_memset_s(void *dest, size_t destsz, int ch, size_t count)
+ 
+ #if defined(HAVE_MEMSET_EXPLICIT)
+-	memset_explicit(dest, destsz, ch, count);
++	memset_explicit(dest, ch, count);
+ #else /* HAVE_MEMSET_EXPLICIT */
+ 	memset(dest, ch, count);
+ # if defined(HAVE_GCC_VOLATILE_MEMORY_PROTECTION)
+PATCH
