@@ -187,18 +187,16 @@ jobs:
           $GITHUB_WORKSPACE/.github/scripts/prepare-i2c-tools.sh
 
           mkdir -p feeds/packages/net/samba4/patches
-          cat > feeds/packages/net/samba4/patches/999-memset-explicit-c23.patch <<'EOF'
-          --- a/lib/replace/replace.c
-          +++ b/lib/replace/replace.c
-          @@ -970,7 +970,7 @@ int rep_memset_s(void *dest, size_t destsz, int ch, size_t count)
-            }
-           
-          #if defined(HAVE_MEMSET_EXPLICIT)
-          -	memset_explicit(dest, destsz, ch, count);
-          +	memset_explicit(dest, ch, count);
-          #else /* HAVE_MEMSET_EXPLICIT */
-           memset(dest, ch, count);
-          EOF
+          printf '%s\n' \
+            '--- a/lib/replace/replace.c' \
+            '+++ b/lib/replace/replace.c' \
+            '@@ -972,3 +972,3 @@' \
+            ' #if defined(HAVE_MEMSET_EXPLICIT)' \
+            $'-\tmemset_explicit(dest, destsz, ch, count);' \
+            $'+\tmemset_explicit(dest, ch, count);' \
+            ' #else /* HAVE_MEMSET_EXPLICIT */' \
+            > feeds/packages/net/samba4/patches/999-memset-explicit-c23.patch
+
       
       - name: Custom Settings
         run: |
